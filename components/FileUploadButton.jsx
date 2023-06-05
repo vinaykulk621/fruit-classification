@@ -22,8 +22,10 @@ function imgToTensor() {
 
 async function predict() {
   console.log("predicting");
-  const modelPath = "@/models/model.json";
-  const model = await tf.loadLayersModel(modelPath);
+  // const modelPath = "/models/model.json";
+  const model = await tf.loadLayersModel(
+    "https://lxpvudvqfvttinrfcjmq.supabase.co/storage/v1/object/public/model/model.json"
+  );
   const inputTensor = imgToTensor();
   console.log("model acquired");
   const predictions = model.predict(inputTensor);
