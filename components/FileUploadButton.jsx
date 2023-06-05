@@ -3,10 +3,79 @@
 import React, { useState, useRef } from "react";
 import Image from "next/image";
 import Img from "@/images/img.png";
+import * as tf from "@tensorflow/tfjs";
+import { useRouter } from "next/navigation";
+
+function imgToTensor() {
+  const imageElement = document.getElementById("fruit_image");
+  const targetWidth = 224; // Set the desired target width for resizing
+  const targetHeight = 224; // Set the desired target height for resizing
+  const imageTensor = tf.browser.fromPixels(imageElement);
+  const preprocessedImage = imageTensor
+    .resizeBilinear([targetWidth, targetHeight])
+    .toFloat()
+    .div(255);
+  const inputTensor = preprocessedImage.expandDims();
+  console.log("inputTensor", inputTensor);
+  return inputTensor;
+}
+
+async function predict() {
+  console.log("predicting");
+  const modelPath = "@/models/model.json";
+  const model = await tf.loadLayersModel(modelPath);
+  const inputTensor = imgToTensor();
+  console.log("model acquired");
+  const predictions = model.predict(inputTensor);
+
+  console.log("model predicted");
+  const predictedClassIndex = predictions.argMax(1).dataSync()[0];
+  const labels = [
+    "apple",
+    "banana",
+    "beetroot",
+    "bell pepper",
+    "cabbage",
+    "capsicum",
+    "carrot",
+    "cauliflower",
+    "chilli pepper",
+    "corn",
+    "cucumber",
+    "eggplant",
+    "garlic",
+    "ginger",
+    "grapes",
+    "jalepeno",
+    "kiwi",
+    "lemon",
+    "lettuce",
+    "mango",
+    "onion",
+    "orange",
+    "paprika",
+    "pear",
+    "peas",
+    "pineapple",
+    "pomegranate",
+    "potato",
+    "raddish",
+    "soy beans",
+    "spinach",
+    "sweetcorn",
+    "sweetpotato",
+    "tomato",
+    "turnip",
+    "watermelon",
+  ];
+  const predictedLabel = labels[predictedClassIndex];
+  return predictedLabel;
+}
 
 function FileUploadButton() {
   const [selectedImage, setSelectedImage] = useState(null);
   const fileInputRef = useRef(null);
+  const router = useRouter();
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
@@ -23,31 +92,14 @@ function FileUploadButton() {
     fileInputRef.current.click();
   };
 
-  const handleSubmit = (event) => {
-    console.log("Submitting");
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Perform the API request to submit the image
     if (selectedImage) {
-      // Replace 'apiEndpoint' with the actual API endpoint
-      fetch("apiEndpoint", {
-        method: "POST",
-        body: selectedImage,
-        headers: {
-          "Content-Type": "image/*",
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          // Handle the API response data
-          console.log(data);
-        })
-        .catch((error) => {
-          // Handle the API request error
-          console.error(error);
-        });
+      const fruit = await predict();
+      console.log(fruit);
+      // router.push("/results");
     }
   };
-
   return (
     <>
       <button
@@ -58,6 +110,7 @@ function FileUploadButton() {
             <div className="preview">
               <h1>Selected Image</h1>
               <Image
+                id="fruit_image"
                 src={selectedImage}
                 className="previewImage"
                 alt="Selected"
