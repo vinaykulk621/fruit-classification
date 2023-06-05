@@ -10,6 +10,6 @@ def convert_h5_to_json(h5_model_path, json_model_path) -> None:
     print('Write done')
 
 
-h5_model_path = 'models/model.h5'
+h5_model_path = 'model/model.h5'
 json_model_path = 'models/model.json'
 convert_h5_to_json(h5_model_path, json_model_path)
