@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useRef } from "react";
 import Image from "next/image";
 import Img from "@/images/img.png";
@@ -48,18 +50,30 @@ function FileUploadButton() {
 
   return (
     <>
-      <button className="uploadButton" onClick={handleClick}>
+      <button
+        className="uploadButton"
+        onClick={handleClick}>
         {selectedImage ? (
           <>
             <div className="preview">
               <h1>Selected Image</h1>
-              <Image src={selectedImage} className="previewImage" alt="Selected" />
+              <Image
+                src={selectedImage}
+                className="previewImage"
+                alt="Selected"
+                width={300}
+                height={300}
+              />
             </div>
           </>
         ) : (
           <>
-            <Image src={Img} className="imageIcons" alt="upload Image" />
-            <h2 className="finalUpload">Let's find out!</h2>
+            <Image
+              src={Img}
+              className="imageIcons"
+              alt="upload Image"
+            />
+            <h2 className="finalUpload">Let&apos;s find out!</h2>
             <p className="usageInfo">Click here to add an image</p>
           </>
         )}
@@ -70,7 +84,10 @@ function FileUploadButton() {
         style={{ display: "none" }}
         ref={fileInputRef}
       />
-      <button type="submit" className="btn trynow" onClick={handleSubmit}>
+      <button
+        type="submit"
+        className="btn trynow"
+        onClick={handleSubmit}>
         Identify!
       </button>
     </>
